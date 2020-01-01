@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <h1>Hello , <%= user %></h1>
+    <div class="container"></div>
+    <a href="/add-category">Add category</a>
+    <a href="/add-products">Add products</a>
+    <a href="/api/users/logout">logout</a>
+    <h1><label id="message"></label></h1>
+    <div class="container">
+        <form name="product-frm">
+            <select id="cat-name" name="categoryName">
+                <option>Select Category</option>
+            </select>
+            <input type="text" name="productName" />
+            <input type="button" id="add-product" value="Add" />
+        </form>
+    </div>
+    <table id="prod-table" border="1">
+        <thead><th>SR.no</th><th>Product Name</th><th>Category Name</th>
+            <!-- <th>Action</th> -->
+        </thead>
+        <tbody></tbody>
+    </table>
+    <table id="prod-no-table" border="1">
+        <thead><th>SR.no</th><th>Category Name</th><th>No Of Product</th>
+            <!-- <th>Action</th> -->
+        </thead>
+        <tbody></tbody>
+    </table>
+  </body>
+  <script src="/js/vendor/jquery-1.12.4.min.js"></script>
+  <script>
+    $(document).ready(function(e){
+        $('#add-product').on('click' , function(e){
+            const formData = $('form[name="product-frm"]').serializeArray()
+            $.ajax({
+                url:'/api/product/create',
+                method:'POST',
+                dataType: 'json',
+                data:formData,
+                success: function(response){
+                    if(response.status == true){
+                        $('#message').html(response.message);
+                        rendeerList();
+                    }
+                }
+            })
+        })
+
+        var rendeerList = function(){
+            $.ajax({
+                url:'/api/product/select',
+                method:'GET',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status == true){
+                        var data = response.data;
+                        $('tbody','#prod-table').html('');
+                        
+                        if(data.length == 0){
+                            $('tbody','#prod-table').html('<td colspan=2>No Records Found</td>');
+                            return false;
+                        }
+                        var catTable = ''
+                        $.each(data, function(i, l){
+                            var categoryName = l.categoryName || '--'
+                            catTable = '<tr>';
+                            catTable += '<td>'+(i+1)+'</td>';
+                            catTable += '<td>'+l.product+'</td>';
+                            catTable += '<td>'+categoryName+'</td>';
+                            // catTable += '<td><a href="#" class="delete-cat">Delete</a></td>';
+                            catTable += '</tr>';
+                            $('tbody','#prod-table').append(catTable);
+                        })
+                    }
+                }
+            })
+        }
+
+        var renderNoOfProductInCategoryList = function(){
+            $.ajax({
+                url:'/api/product/no-of-products',
+                method:'GET',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status == true){
+                        var data = response.data;
+                        $('tbody','#prod-no-table').html('');
+                        
+                        if(data.length == 0){
+                            $('tbody','#prod-no-table').html('<td colspan=2>No Records Found</td>');
+                            return false;
+                        }
+                        var catTable = ''
+                        $.each(data, function(i, l){
+                            var categoryName = l._id || '--'
+                            catTable = '<tr>';
+                            catTable += '<td>'+(i+1)+'</td>';
+                            catTable += '<td>'+categoryName+'</td>';
+                            catTable += '<td>'+l.count+'</td>';
+                            // catTable += '<td><a href="#" class="delete-cat">Delete</a></td>';
+                            catTable += '</tr>';
+                            $('tbody','#prod-no-table').append(catTable);
+                        })
+                    }
+                }
+            })
+        }
+
+        var renderCategories = function(){
+            $.ajax({
+                url:'/api/product/categories',
+                method:'GET',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status == true){
+                        var data = response.data;
+                        $('#cat-name').html('<option value="">Select</option>');
+                        $.each(data, function(i, l){
+                            $('#cat-name').append('<option value="'+l._id+'##'+l.categoryName+'">'+l.categoryName+'</option>');
+                        })
+                    }
+                }
+            })
+        }
+
+       
+    
+    renderCategories();
+    rendeerList();
+    renderNoOfProductInCategoryList();
+    
+    })
+</script>
+</html>

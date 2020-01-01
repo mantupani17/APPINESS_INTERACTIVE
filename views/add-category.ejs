@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <h1>Hello , <%= user %></h1>
+    <div class="container"></div>
+    <a href="/add-category">Add category</a>
+    <a href="/add-products">Add products</a>
+    <a href="/api/users/logout">logout</a>
+    <h1><label id="message"></label></h1>
+    <div class="container">
+        <form name="category-frm">
+            <input type="text" name="categoryName" />
+            <input type="button" id="add-category" value="Add" />
+        </form>
+    </div>
+    <table id="cat-table" border="1">
+        <thead><th>SR.no</th><th>Category Name</th><th>Action</th></thead>
+        <tbody></tbody>
+    </table>
+  </body>
+  <script src="/js/vendor/jquery-1.12.4.min.js"></script>
+  <script>
+    $(document).ready(function(e){
+        $('#add-category').on('click' , function(e){
+            const formData = $('form[name="category-frm"]').serializeArray()
+            $.ajax({
+                url:'/api/product/categories',
+                method:'POST',
+                dataType: 'json',
+                data:formData,
+                success: function(response){
+                    if(response.status == true){
+                        $('#message').html(response.message);
+                        rendeerList()
+                    }
+                }
+            })
+        })
+
+        var rendeerList = function(){
+            $.ajax({
+                url:'/api/product/categories',
+                method:'GET',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status == true){
+                        var data = response.data;
+                        $('tbody','#cat-table').html('');
+                        if(data.length == 0){
+                            $('tbody','#cat-table').html('<td colspan=2>No Records Found</td>');
+                            return false;
+                        }
+                        var catTable = ''
+                        $.each(data, function(i, l){
+                            catTable = '<tr>';
+                            catTable += '<td>'+(i+1)+'</td>';
+                            catTable += '<td>'+l.categoryName+'</td>';
+                            catTable += '<td><a href="#" class="delete-cat" data-_id="'+l._id+'">Delete</a></td>';
+                            catTable += '</tr>';
+                            $('tbody','#cat-table').append(catTable);
+                        })
+                        deleteCategory();
+                    }
+                }
+            })
+        }
+
+        var deleteCategory = function(){
+            $('.delete-cat').unbind('click').on('click' , function(e){
+                var catId = $(this).data('_id')
+                $.ajax({
+                    url:'/api/product/categories',
+                    method:'DELETE',
+                    dataType: 'json',
+                    data:{_id:catId},
+                    success: function(response){
+                        if(response.status == true){
+                            $('#message').html(response.message);
+                            rendeerList()
+                        }
+                    }
+                })
+            })
+        }
+    
+        rendeerList();
+    
+    })
+</script>
+</html>
