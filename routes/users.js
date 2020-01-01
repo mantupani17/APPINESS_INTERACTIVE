@@ -21,43 +21,7 @@ API.login = function (req, res, next) {
     }
 };
 
-// API.login = function()
-
-API.resgistration = function(req, res , next){
-    try {
-        const userData = req.body
-        const name = userData.name;
-        const email = userData.email || 'mantu@mintbook.com '
-        const password = userData.password || 'Infotech@1'
-        const user = {
-            name: name,
-            email: email,
-            password:password,
-            setting: {
-              themeColor: '',
-              favouriteTeam:  '',
-              teamIcon:''
-            }
-        }
-
-        UserModel.createUser(user , function(err){
-            if(err){
-                console.log(err)
-                res.send({status:false, 'message':'Failed'})
-            }
-            res.redirect('/login')
-        })
-        
-    } catch (error) {
-        console.log(error)
-        res.redirect('/register')
-        res.send({
-            message : ""
-        })
-    }
-}
-
-
+// user registration and register first user as admin
 async function registerUser(req, res, next){
     try {
         let role = 'ADMIN'
