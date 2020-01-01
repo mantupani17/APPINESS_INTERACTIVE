@@ -5,6 +5,7 @@ const ProductModel = require('../models/Product')
 
 const API = {}
 
+// adding new category
 async function createCategory(req, res, next){
     try {
         const postData = req.body  
@@ -27,9 +28,10 @@ async function createCategory(req, res, next){
     }
 }
 
+// getting categories 
 async function getCategories(req, res, next){
     try {
-        const resu = {status:false,message:'Failed to create category.', data:[]}
+        const resu = {status:true,message:'', data:[]}
 
         const result = await CategoryModel.find({})
 
@@ -49,6 +51,7 @@ async function getCategories(req, res, next){
     }
 }
 
+// delete category and related products and return how many records are removed
 async function deleteCategory(req, res, next){
     try {
         const postData = req.body  
@@ -73,6 +76,7 @@ async function deleteCategory(req, res, next){
     }
 }
 
+// count no of products in each category
 async function countNoOfProducts(req, res, next){
     try {
         const resu = {status:false,message:'Failed to create category.', data:[]}
@@ -99,6 +103,7 @@ async function countNoOfProducts(req, res, next){
 }
 
 
+//  adding new product in to system
 async function createProduct(req, res, next){
     try {
         const postData = req.body 
@@ -127,6 +132,7 @@ async function createProduct(req, res, next){
     }
 }
 
+// getting products list
 async function getProducts(req, res, next){
     try {
         const resu = {status:true,message:'', data:[]}
