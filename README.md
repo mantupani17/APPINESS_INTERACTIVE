@@ -11,7 +11,7 @@ Routes/users ----
 front end rendering route
 /register   
 /add-products
-/app-categories
+/add-categories
 
 in register page, im calling an API for registering user. first user is always ADMIN and others are always USER.
 in add-categories page,calling  API's for creating categories, rendering categories and deleting categories while deletion of any category related products will delete.
