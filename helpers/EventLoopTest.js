@@ -15,7 +15,7 @@ var readFileData = function(){
     })
 
     readStream.on('data', function(data){
-        readval = ', Fuck you '+data.toString();
+        readval = ', \n Fuck you '+data.toString();
         console.log(data.toString())
     })
 
